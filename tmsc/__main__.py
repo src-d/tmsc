@@ -34,7 +34,7 @@ def main():
                         help="Number of topics to print.")
     parser.add_argument("-f", "--format", default="human", choices=["json", "human"],
                         help="Output format.")
-    
+
     args = parser.parse_args()
     if args.linguist is None:
         args.linguist = "./enry"

@@ -102,7 +102,7 @@ class TopicDetector:
                                  "custom repositories")
             bow_dict = self._repo2bow.convert_repository(url_or_path_or_name)
             token_vector = numpy.zeros(self._topics.matrix.shape[1], dtype=numpy.float32)
-            for i,v in bow_dict.items():
+            for i, v in bow_dict.items():
                 token_vector[i] = v
             token_vector = csr_matrix(token_vector)
         topic_vector = -numpy.squeeze(self._topics.matrix.dot(token_vector.T).toarray())

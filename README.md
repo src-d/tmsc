@@ -10,3 +10,17 @@ import tmsc
 engine = tmsc.Topics()
 print(engine.query("https://github.com/tensorflow/tensorflow"))
 ```
+
+### Docker image
+
+```
+docker build -t srcd/tmsc .
+docker run -d --privileged -p 9432:9432 --name bblfsh --rm bblfsh/server
+docker run -it --rm srcd/tmsc https://github.com/apache/spark
+```
+
+In order to cache the downloaded models:
+
+```
+docker run -it --rm -v /path/to/cache/on/host:/root srcd/tmsc https://github.com/apache/spark
+```

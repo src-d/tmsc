@@ -48,7 +48,8 @@ class TopicDetector:
         self._log.info("Loaded topics model: %s", self._topics)
         if docfreq is None:
             if docfreq is not False:
-                self._docfreq = DocumentFrequencies(log_level=verbosity).load(backend=backend)
+                self._docfreq = DocumentFrequencies(log_level=verbosity).load(
+                    source=self._topics.get_dependency("docfreq")["uuid"], backend=backend)
             else:
                 self._docfreq = None
                 self._log.warning("Disabled document frequencies - you will "

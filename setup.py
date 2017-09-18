@@ -6,7 +6,7 @@ setup(
     description="Part of source{d}'s stack for machine learning on source "
                 "code. Provides API and tools to detect topics in Git "
                 "repositories.",
-    version="0.1.0-alpha",
+    version="0.1.1-alpha",
     license="Apache 2.0",
     author="source{d}",
     author_email="machine-learning@sourced.tech",
@@ -18,8 +18,7 @@ setup(
     },
     keywords=["machine learning on source code", "topic modeling",
               "github", "bblfsh", "babelfish", "ast2vec"],
-    install_requires=["ast2vec>=0.3.0-alpha",
-                      "wmd>=1.2.6"],
+    install_requires=["ast2vec>=0.3.0-alpha"],
     package_data={"": ["LICENSE", "README.md"]},
     classifiers=[
         "Development Status :: 3 - Alpha",

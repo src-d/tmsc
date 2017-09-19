@@ -30,6 +30,9 @@ def main():
     parser.add_argument("--gcs", default=None, help="GCS bucket to use.")
     parser.add_argument("--linguist", default=None,
                         help="Path to src-d/enry or github/linguist.")
+    parser.add_argument("--prune-df", default=20, type=int,
+                        help="Minimum number of times an identifer must occur in different "
+                             "documents to be taken into account.")
     parser.add_argument("-n", "--nnn", default=10, type=int,
                         help="Number of topics to print.")
     parser.add_argument("-f", "--format", default="human", choices=["json", "human"],
@@ -52,7 +55,7 @@ def main():
         args.bow = BOWBase(log_level=args.log_level).load(source=args.bow, backend=backend)
     sr = TopicDetector(
         topics=args.topics, docfreq=args.df, bow=args.bow, verbosity=args.log_level,
-        gcs_bucket=args.gcs, repo2bow_kwargs={
+        prune_df_threshold=args.prune_df, gcs_bucket=args.gcs, repo2bow_kwargs={
             "linguist": args.linguist,
             "bblfsh_endpoint": args.bblfsh,
             "timeout": args.timeout})
@@ -61,7 +64,7 @@ def main():
         json.dump({"repository": args.input, "topics": topics}, sys.stdout)
     elif args.format == "human":
         for t, r in topics:
-            print("%64s" % t, "%.2f" % r)
+            print("%64s" % t, "%.2f" % r, sep="\t")
 
 
 if __name__ == "__main__":

@@ -31,7 +31,8 @@ class TopicDetector:
         r"(https://|ssh://git@|git://)(github.com/[^/]+/[^/]+)(|.git|/)")
 
     def __init__(self, topics=None, docfreq=None, bow=None, verbosity=logging.DEBUG,
-                 gcs_bucket=None, initialize_environment=True, repo2bow_kwargs=None):
+                 prune_df_threshold=1, gcs_bucket=None, initialize_environment=True,
+                 repo2bow_kwargs=None):
         if initialize_environment:
             initialize()
         self._log = logging.getLogger("topic_detector")
@@ -57,6 +58,9 @@ class TopicDetector:
         else:
             assert isinstance(docfreq, DocumentFrequencies)
             self._docfreq = docfreq
+        if self._docfreq is not None:
+            self._docfreq = self._docfreq.prune(prune_df_threshold)
+        self._log.info("Loaded docfreq model: %s", self._docfreq)
         if bow is not None:
             assert isinstance(bow, BOWBase)
             self._bow = bow

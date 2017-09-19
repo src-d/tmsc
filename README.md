@@ -25,6 +25,12 @@ The current model was trained on GitHub repositories cloned in October 2016 afte
 [de-fuzzy-forking](https://blog.sourced.tech/post/minhashcuda/). There is a
 [paper](https://arxiv.org/abs/1704.00135) on it.
 
+### Installation
+
+```
+pip3 install tmsc
+```
+
 ### Usage
 
 Command line:

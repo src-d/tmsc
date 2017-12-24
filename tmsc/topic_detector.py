@@ -3,7 +3,7 @@ import re
 
 from ast2vec import Topics, Repo2Base, DocumentFrequencies
 from ast2vec.bow import BOWBase
-from ast2vec.model2.source2bow import Uasts2BOW
+from ast2vec.model2.uast2bow import Uasts2BOW
 from modelforge.backends import create_backend
 import numpy
 from scipy.sparse import csr_matrix

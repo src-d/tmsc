@@ -63,6 +63,10 @@ In order to cache the downloaded models:
 docker run -it --rm -v /path/to/cache/on/host:/root srcd/tmsc https://github.com/apache/spark
 ```
 
+### Contributions
+
+...are welcome! See [CONTRIBUTING](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md).
+
 ### License
 
-Apache 2.0.
+[Apache 2.0](LICENSE.md)

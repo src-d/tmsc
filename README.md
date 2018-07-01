@@ -45,7 +45,7 @@ Python API:
 import tmsc
 
 engine = tmsc.Topics()
-print(engine.query("https://https://github.com/apache/spark"))
+print(engine.query("https://github.com/apache/spark"))
 ```
 
 ### Docker image

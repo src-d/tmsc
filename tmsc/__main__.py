@@ -3,13 +3,13 @@ import json
 import logging
 import sys
 
-from ast2vec import Topics, DocumentFrequencies, DEFAULT_BBLFSH_TIMEOUT
-from ast2vec.bow import BOWBase
+from sourced.ml.models import BOW, Topics, DocumentFrequencies
 from modelforge.backends import create_backend
 
 from tmsc.environment import initialize
 from tmsc.topic_detector import TopicDetector
 
+DEFAULT_BBLFSH_TIMEOUT = 10
 
 def main():
     parser = argparse.ArgumentParser()
@@ -52,7 +52,7 @@ def main():
         args.df = DocumentFrequencies(log_level=args.log_level).load(
             source=args.df, backend=backend)
     if args.bow is not None:
-        args.bow = BOWBase(log_level=args.log_level).load(source=args.bow, backend=backend)
+        args.bow = BOW(log_level=args.log_level).load(source=args.bow, backend=backend)
     sr = TopicDetector(
         topics=args.topics, docfreq=args.df, bow=args.bow, verbosity=args.log_level,
         prune_df_threshold=args.prune_df, gcs_bucket=args.gcs, repo2bow_kwargs={

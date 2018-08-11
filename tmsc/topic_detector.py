@@ -1,9 +1,11 @@
 import logging
 import re
 
-from ast2vec import Topics, Repo2Base, DocumentFrequencies
-from ast2vec.bow import BOWBase
+from sourced.ml.models import BOW, Topics, DocumentFrequencies
+
+from ast2vec import Repo2Base
 from ast2vec.model2.uast2bow import Uasts2BOW
+
 from modelforge.backends import create_backend
 import numpy
 from scipy.sparse import csr_matrix
@@ -15,7 +17,7 @@ class Repo2BOW(Repo2Base):
     """
     Implements the step repository -> :class:`ast2vec.nbow.NBOW`.
     """
-    MODEL_CLASS = BOWBase
+    MODEL_CLASS = BOW
 
     def __init__(self, vocabulary, docfreq, **kwargs):
         super().__init__(**kwargs)
@@ -62,7 +64,7 @@ class TopicDetector:
             self._docfreq = self._docfreq.prune(prune_df_threshold)
         self._log.info("Loaded docfreq model: %s", self._docfreq)
         if bow is not None:
-            assert isinstance(bow, BOWBase)
+            assert isinstance(bow, BOW)
             self._bow = bow
             if self._topics.matrix.shape[1] != self._bow.matrix.shape[1]:
                 raise ValueError("Models do not match: topics has %s tokens while bow has %s" %

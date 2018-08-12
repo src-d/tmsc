@@ -1,13 +1,15 @@
 import logging
+import sys
 import re
 
-from ast2vec import Repo2Base
-#from ast2vec.model2.uast2bow import Uasts2BOW #?replace \w sourced.ml
-
-from sourced.ml.models import BOW, Topics, DocumentFrequencies
+# compatibility with old ast2vec version that depends on old modelforge
+sys.modules["modelforge.generate_meta"] = None
+sys.modules["modelforge.model.write_model"] = None
 
 import numpy
 from scipy.sparse import csr_matrix
+from ast2vec.repo2.base import Repo2Base
+from sourced.ml.models import BOW, Topics, DocumentFrequencies
 
 from tmsc.environment import initialize
 from tmsc.uast2bow import Uasts2BOW

@@ -1,17 +1,16 @@
 import logging
 import re
 
+from ast2vec import Repo2Base
+#from ast2vec.model2.uast2bow import Uasts2BOW #?replace \w sourced.ml
+
 from sourced.ml.models import BOW, Topics, DocumentFrequencies
 
-from ast2vec import Repo2Base
-from ast2vec.model2.uast2bow import Uasts2BOW
-
-from modelforge.backends import create_backend
 import numpy
 from scipy.sparse import csr_matrix
 
 from tmsc.environment import initialize
-
+from tmsc.uast2bow import Uasts2BOW
 
 class Repo2BOW(Repo2Base):
     """
@@ -33,77 +32,63 @@ class TopicDetector:
         r"(https://|ssh://git@|git://)(github.com/[^/]+/[^/]+)(|.git|/)")
 
     def __init__(self, topics=None, docfreq=None, bow=None, verbosity=logging.DEBUG,
-                 prune_df_threshold=1, gcs_bucket=None, initialize_environment=True,
-                 repo2bow_kwargs=None):
-        if initialize_environment:
-            initialize()
+                 prune_df_threshold=1, repo2bow_kwargs=None):
+
         self._log = logging.getLogger("topic_detector")
         self._log.setLevel(verbosity)
-        if gcs_bucket:
-            backend = create_backend(args="bucket=" + gcs_bucket)
-        else:
-            backend = create_backend()
-        if topics is None:
-            self._topics = Topics(log_level=verbosity).load(backend=backend)
-        else:
-            assert isinstance(topics, Topics)
-            self._topics = topics
+
+        if not topics:
+            raise ValueError("Please provide a Topic model")
+        assert isinstance(topics, Topics)
+        self._topics = topics
         self._log.info("Loaded topics model: %s", self._topics)
-        if docfreq is None:
-            if docfreq is not False:
-                self._docfreq = DocumentFrequencies(log_level=verbosity).load(
-                    source=self._topics.dep("docfreq")["uuid"], backend=backend)
-            else:
-                self._docfreq = None
-                self._log.warning("Disabled document frequencies - you will "
-                                  "not be able to query custom repositories.")
+
+        if not docfreq:
+            self._docfreq = None
+            self._log.warning("Disabled document frequencies - you will "
+                              "not be able to query arbitrary repositories.")
+            self._repo2bow = None
         else:
             assert isinstance(docfreq, DocumentFrequencies)
             self._docfreq = docfreq
-        if self._docfreq is not None:
             self._docfreq = self._docfreq.prune(prune_df_threshold)
-        self._log.info("Loaded docfreq model: %s", self._docfreq)
-        if bow is not None:
+            self._log.info("Loaded docfreq model: %s", self._docfreq)
+            self._repo2bow = Repo2BOW(
+                {t: i for i, t in enumerate(self._topics.tokens)}, self._docfreq,
+                **(repo2bow_kwargs or {}))
+        
+        if not bow:
+            self._bow = None
+            self._log.warning("No BOW cache was loaded.")
+        else:
             assert isinstance(bow, BOW)
             self._bow = bow
             if self._topics.matrix.shape[1] != self._bow.matrix.shape[1]:
                 raise ValueError("Models do not match: topics has %s tokens while bow has %s" %
                                  (self._topics.matrix.shape[1], self._bow.matrix.shape[1]))
             self._log.info("Attached BOW model: %s", self._bow)
-        else:
-            self._bow = None
-            self._log.warning("No BOW cache was loaded.")
-        if self._docfreq is not None:
-            self._repo2bow = Repo2BOW(
-                {t: i for i, t in enumerate(self._topics.tokens)}, self._docfreq,
-                **(repo2bow_kwargs or {}))
-        else:
-            self._repo2bow = None
 
     def query(self, url_or_path_or_name, size=5):
         if size > len(self._topics):
             raise ValueError("size may not be greater than the number of topics - %d" %
                              len(self._topics))
-        if self._bow is not None:
+        if self._bow:
             try:
-                repo_index = self._bow.repository_index_by_name(
+                repo_index = self._bow.repository_index_by_name( #TODO
                     url_or_path_or_name)
             except KeyError:
-                repo_index = -1
-            if repo_index == -1:
                 match = self.GITHUB_URL_RE.match(url_or_path_or_name)
-                if match is not None:
+                if match:
                     name = match.group(2)
                     try:
-                        repo_index = self._bow.repository_index_by_name(name)
+                        repo_index = self._bow.repository_index_by_name(name) #TODO
                     except KeyError:
                         pass
-        else:
-            repo_index = -1
-        if repo_index >= 0:
-            token_vector = self._bow.matrix[repo_index]
-        else:
-            if self._docfreq is None:
+            if repo_index:
+                token_vector = self._bow.matrix[repo_index]
+        
+        if not token_vector:
+            if not self._docfreq:
                 raise ValueError("You need to specify document frequencies model to process "
                                  "custom repositories")
             bow_dict = self._repo2bow.convert_repository(url_or_path_or_name)
@@ -111,6 +96,7 @@ class TopicDetector:
             for i, v in bow_dict.items():
                 token_vector[i] = v
             token_vector = csr_matrix(token_vector)
+
         topic_vector = -numpy.squeeze(self._topics.matrix.dot(token_vector.T).toarray())
         order = numpy.argsort(topic_vector)
         result = []

@@ -1,1 +1,2 @@
 sourced-ml==0.5.1
+ast2vec>=0.3.8-alpha

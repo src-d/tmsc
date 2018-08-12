@@ -18,7 +18,7 @@ setup(
     },
     keywords=["machine learning on source code", "topic modeling",
               "github", "bblfsh", "babelfish"],
-    install_requires=["sourced-ml>=0.5.1"],
+    install_requires=["sourced-ml>=0.5.1", "ast2vec>=0.3.8-alpha"],
     package_data={"": ["LICENSE.md", "README.md"]},
     classifiers=[
         "Development Status :: 3 - Alpha",

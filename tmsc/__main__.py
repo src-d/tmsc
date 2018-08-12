@@ -57,7 +57,7 @@ def main():
 
     args.topics = Topics(log_level=args.log_level).load(source=args.topics, backend=backend) #source=args.topics
     args.df = DocumentFrequencies(log_level=args.log_level).load(source=args.df, backend=backend)
-    args.bow = BOW(log_level=args.log_level).load(source=args.bow, backend=backend)
+    #args.bow = BOW(log_level=args.log_level).load(source=args.bow, backend=backend)
 
     sr = TopicDetector(
         topics=args.topics, docfreq=args.df, bow=args.bow, verbosity=args.log_level,

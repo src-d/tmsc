@@ -72,21 +72,22 @@ class TopicDetector:
         if size > len(self._topics):
             raise ValueError("size may not be greater than the number of topics - %d" %
                              len(self._topics))
+        token_vector = None
         if self._bow:
             try:
-                repo_index = self._bow.repository_index_by_name( #TODO
+                repo_index = self._bow.documents_index(
                     url_or_path_or_name)
             except KeyError:
                 match = self.GITHUB_URL_RE.match(url_or_path_or_name)
                 if match:
                     name = match.group(2)
                     try:
-                        repo_index = self._bow.repository_index_by_name(name) #TODO
+                        repo_index = self._bow.documents_index(name)
                     except KeyError:
                         pass
             if repo_index:
                 token_vector = self._bow.matrix[repo_index]
-        
+
         if not token_vector:
             if not self._docfreq:
                 raise ValueError("You need to specify document frequencies model to process "

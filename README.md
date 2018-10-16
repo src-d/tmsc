@@ -1,7 +1,7 @@
 # TMSC [![Build Status](https://travis-ci.org/src-d/tmsc.svg)](https://travis-ci.org/src-d/tmsc) [![codecov](https://codecov.io/github/src-d/tmsc/coverage.svg?branch=develop)](https://codecov.io/gh/src-d/tmsc) [![Docker Build Status](https://img.shields.io/docker/build/srcd/tmsc.svg)](https://hub.docker.com/r/srcd/tmsc) [![PyPI](https://img.shields.io/pypi/v/tmsc.svg)](https://pypi.python.org/pypi/tmsc)
 
 TMSC (Topics Modeling on Source Code) is a command line application to discover the topics of
-a repository the uses provides. A "topic" is a set of keywords, in this case source code
+a repository the user provides. A "topic" is a set of keywords, in this case source code
 identifiers, which typically occur together. This project has **nothing** to do with
 [GitHub topics](https://github.com/blog/2309-introducing-topics).
 

@@ -1,7 +1,6 @@
 import logging
 
 from modelforge.logs import setup_logging
-from ast2vec import ensure_bblfsh_is_running_noexc, install_enry
 
 
 __initialized__ = False
@@ -22,6 +21,6 @@ def initialize(log_level=logging.INFO, enry="./enry"):
     if __initialized__:
         return
     setup_logging(log_level)
-    ensure_bblfsh_is_running_noexc()
-    install_enry(target=enry, warn_exists=False)
+#    ensure_bblfsh_is_running_noexc()
+#    install_enry(target=enry, warn_exists=False)
     __initialized__ = True
